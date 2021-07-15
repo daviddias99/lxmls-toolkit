@@ -46,7 +46,26 @@ class PytorchMLP(MLP):
         # ----------
         # Solution to Exercise 4
 
-        raise NotImplementedError("Implement Exercise 4")
+        # Hidden layers
+        num_hidden_layers = len(self.parameters) - 1
+        for n in range(num_hidden_layers):
+
+            # Store input to this layer (needed for backpropagation)
+
+            # Linear transformation
+            weight, bias = self.parameters[n]
+            z = torch.matmul(tilde_z, torch.t(weight)) + bias
+
+            # Non-linear transformation (sigmoid)
+            tilde_z = torch.sigmoid(z)
+
+
+        # Output linear transformation
+        weight, bias = self.parameters[num_hidden_layers]
+        z = torch.matmul(tilde_z,  torch.t(weight)) + bias
+
+        # Softmax is computed in log-domain to prevent underflow/overflow
+        log_tilde_z = self.logsoftmax(z)
 
         # End of solution to Exercise 4
         # ----------

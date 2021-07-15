@@ -21,10 +21,12 @@ class PolicyGradient(nn.Module):
         # ----------
         # Solution to Exercise 6.4
 
-        raise Exception("Complete exercise 6.4")
+        # raise Exception("Complete exercise 6.4")
 
         # End of solution to Exercise 6.4
         # ----------
+
+        return self.linear2(self.linear(state))
 
 
 def train():

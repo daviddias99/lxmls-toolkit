@@ -16,6 +16,9 @@ class MultinomialNaiveBayes(lc.LinearClassifier):
         self.smooth_param = 1
 
     def train(self, x, y):
+        
+        print('Data sample')
+        print(np.hstack((x[0:5], y[0:5])))
         # n_docs = no. of documents
         # n_words = no. of unique words
         n_docs, n_words = x.shape
@@ -24,6 +27,8 @@ class MultinomialNaiveBayes(lc.LinearClassifier):
         classes = np.unique(y)
         # n_classes = no. of classes
         n_classes = np.unique(y).shape[0]
+
+        print(f'NDocs: {n_docs} NWords: {n_words} Classes: {classes} NClasses: {n_classes}')
 
         # initialization of the prior and likelihood variables
         prior = np.zeros(n_classes)
@@ -42,7 +47,19 @@ class MultinomialNaiveBayes(lc.LinearClassifier):
         # ----------
         # Solution to Exercise 1
 
-        raise NotImplementedError("Complete Exercise 1")
+        for k in range(n_classes):
+
+            inputs_with_class_k_index = (y == classes[k]).flatten()
+            number_in_class = np.sum(inputs_with_class_k_index)
+            prior[k] = number_in_class / n_docs
+            print(f'Class {classes[k]} - {number_in_class}')
+
+            inputs_with_class_k = x[inputs_with_class_k_index]
+            conditional_denom = np.sum(inputs_with_class_k)
+    
+            for j in range(n_words):
+                likelihood[j][k] = (np.sum(inputs_with_class_k[:,j]) + 1)/(conditional_denom + n_words)
+
 
         # End solution to Exercise 1
         # ----------

@@ -56,7 +56,7 @@ class SimpleDataSet:
         params[2, 0] = 1.0 / self.variance1 * self.mean1[1]
         params[1, 1] = 1.0 / self.variance2 * self.mean2[0]
         params[2, 1] = 1.0 / self.variance2 * self.mean2[1]
-        print(params)
+        # print(params)
         return params
 
     def plot_data(self, params=np.array([]), name="Naive Bayes", print_bayes_opt=True, backend=None):
@@ -93,7 +93,7 @@ class SimpleDataSet:
         y_star = (
             (params[1, 1]-params[1, 0])*x + (params[0, 1]-params[0, 0])
         ) / (params[2, 0]-params[2, 1])
-        axis.plot(x, y_star, 'g--', c=colour, label=name, linewidth=2)
+        axis.plot(x, y_star, '--', c=colour, label=name, linewidth=2)
         axis.legend()
         return fig, axis
 

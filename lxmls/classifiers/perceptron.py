@@ -20,6 +20,7 @@ class Perceptron(lc.LinearClassifier):
         nr_x, nr_f = x.shape
         nr_c = np.unique(y).shape[0]
         w = np.zeros((nr_f, nr_c))
+        intermediate_w = [[]]*self.nr_epochs
         for epoch_nr in range(self.nr_epochs):
 
             # use seed to generate permutation
@@ -41,6 +42,8 @@ class Perceptron(lc.LinearClassifier):
                     # Decrease features of the prediction
                     w[:, y_hat] += -1 * self.learning_rate * x[inst:inst+1, :].transpose()
 
+                intermediate_w[epoch_nr].append(w.copy())
+
             self.params_per_round.append(w.copy())
             self.trained = True
             y_pred = self.test(x_orig, w)
@@ -54,5 +57,5 @@ class Perceptron(lc.LinearClassifier):
             for old_w in self.params_per_round:
                 new_w += old_w
             new_w /= len(self.params_per_round)
-            return new_w
-        return w
+            return new_w, intermediate_w
+        return w, intermediate_w

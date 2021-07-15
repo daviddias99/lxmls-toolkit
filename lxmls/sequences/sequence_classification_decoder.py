@@ -101,21 +101,35 @@ class SequenceClassificationDecoder:
         # ----------
         # Solution to Exercise 8
 
-        raise NotImplementedError("Complete Exercise 8")
-
         #### Little guide of the implementation ####################################
+
+
         # Initializatize the viterbi scores
-        #
+
+        viterbi_scores[0, :] = initial_scores + emission_scores[0,:]
+        
         # Do the double of the viterbi loop (lines 7 to 12 in the guide pdf)
         # from 1 to length
         #     from 0 to num_states
         #       ...
-        #
+        
+        for pos in range(1, length):
+            for current_state in range(num_states):
+                temp = viterbi_scores[pos - 1] + transition_scores[pos - 1, current_state]
+                viterbi_scores[pos, current_state] = np.max(viterbi_scores[pos - 1] + transition_scores[pos - 1, current_state]) + emission_scores[pos, current_state]
+                viterbi_paths[pos, current_state] = np.argmax(viterbi_scores[pos - 1] + transition_scores[pos - 1, current_state])
+
+        best_score = np.max(final_scores + viterbi_scores[length-1])
+        best_path[-1] = np.argmax(final_scores + viterbi_scores[length-1])
         # define the best_path and best_score
         #
         # backtrack the best_path using the viterbi paths (lines 17-18 pseudocode in the guide pdf)
         #
-        # return best_path and best_score
+
+        for i in range(length-2, -1, -1):
+            best_path[i] = viterbi_paths[i+1, best_path[i+1]] 
+
+        return best_path, best_score
         ############################################################################
 
         # End of solution to Exercise 8

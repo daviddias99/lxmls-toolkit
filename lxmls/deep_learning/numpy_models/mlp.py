@@ -1,3 +1,4 @@
+from os import error
 import numpy as np
 from lxmls.deep_learning.mlp import MLP
 from lxmls.deep_learning.utils import index2onehot, logsumexp
@@ -85,18 +86,37 @@ class NumpyMLP(MLP):
         log_prob_y, layer_inputs = self.log_forward(input)
         prob_y = np.exp(log_prob_y)
 
-        num_examples, num_clases = prob_y.shape
+        num_examples, num_classes = prob_y.shape
         num_hidden_layers = len(self.parameters) - 1
 
         # For each layer in reverse store the backpropagated error, then compute
         # the gradients from the errors and the layer inputs
-        errors = []
+        errors = [np.zeros((num_examples, num_classes))]
 
         # ----------
         # Solution to Exercise 2
+        for n in range(num_hidden_layers, -1, -1):
+            if n == num_hidden_layers:
+                one_hot = index2onehot(output, num_classes)
+                errors[-1] = one_hot - prob_y
+            else:
+                W_T = np.transpose(self.parameters[n+1][0])
+                e_n1 = np.transpose(errors[0])
+                error = np.dot(W_T,e_n1)
+                error = error * np.transpose(layer_inputs[n+1]) * (1 - np.transpose(layer_inputs[n+1]))
+                errors.insert(0, np.transpose(error))
 
-        raise NotImplementedError("Implement Exercise 2")
-        
+        gradients = []
+
+        for n in range(num_hidden_layers, -1, -1):
+            gradient_w = np.zeros(self.parameters[n][0].shape)
+            for m in range(num_examples):
+                gradient_w = gradient_w + np.outer(errors[n][m], layer_inputs[n][m])
+            
+            gradient_w *= -1/num_examples
+            gradient_b = -np.sum(errors[n])/num_examples
+            gradients.insert(0,[gradient_w, gradient_b])
+ 
         # End of solution to Exercise 2
         # ----------
 
